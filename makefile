@@ -1,12 +1,13 @@
 CC=gcc
 OBJS=pac.c
 OUT=pac
-CFLAGS=-I/usr/include/SDL2 -D_REENTRANT
-LIBS=-L/usr/lib/x86_64-linux-gnu -lSDL2 -lSDL2_image
+CFLAGS=$(shell sdl2-config --cflags)
+LIBS=$(shell sdl2-config --libs)
+OTHER_LIB=-lSDL2_image
 DEBUG=-ggdb 
 
 all: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) $(LIBS) -o $(OUT) 
+	$(CC) $(OBJS) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(OUT) 
 
 debug: $(OBJ)
-	$(CC) $(OBJS) $(CFLAGS) $(LIBS) -o $(OUT) $(DEBUG)
+	$(CC) $(OBJS) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(OUT) $(DEBUG)
