@@ -1,112 +1,115 @@
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
+#include <stdbool.h>
+
+#include "entity.h"
 #include "sprite.h"
 #include "controller.h"
 #include "window.h"
-#include "bool.h"
+#include "consts.h"
 
+bool Game_processEvents();
 void Game_gameLoop(); 
-int Game_hasQuit();
-void Game_processEvents();
-void Game_checkCollisions(Sprite * sprite1, Sprite * sprite2);
-void Game_checkWallCollisions(Sprite * sprite);
+void Game_initGame();
+
+Entity * player = NULL;
+Entity * egg = NULL;
 
 int main(int argc, char * args[]) {
-    SDL_Window * window = Window_createWindow("Pac Man");
-    if(Window_init() == 1) {
-        if(window == NULL) 
-        {
-            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-        }
-        else
-        {
-            Game_gameLoop();
-            Window_destroy();
-            return 0;
-        }
-    }
+    if(!Window_init(GAME_WINDOW_TITLE,GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT)) {
+        return 1;
+    } 
+    Game_initGame();
+    Game_gameLoop();
+    Window_destroy();
+    return 0;
 }
 
-// TODO: Modify control flow
-//   1.) Iterate through entities;
-//   2.) For every entity, poll for controller input
-//      a.) If controller input, respond to events
-//      b.) Update positions.
-//   4.) Detect and resolve collisions.
-//   5.) For every entity, render entity.
-
-void Game_checkCollisions(Sprite * sprite1, Sprite * sprite2) {
-    if(!(sprite2.x + sprite2.w < sprite1.x)) {
-        if(!(sprite2.y + sprite1.h < sprite1.y)) {
-            Sprite_setVelocity(sprite2, -sprite2.velocity[0], sprite2.velocity[1]);
-        }
-    }
+void moveEntityUp(Entity * entity) {
+    Entity_setVelocity(entity, 0, -200); 
 }
 
-void Game_checkWallCollisions(Sprite * sprite) {
-    int * position = Sprite_getPosition();
-    int * velocity = Sprite_getVelocity();
-    if(position[0] <= 0) {
-        Sprite_setPosition(sprite, 0, position[1]);
-        Sprite_setVelocity(sprite, -velocity[0], velocity[1]);
-    } else if(position[0] + sprite.w >= Window_getWidth()) {
-        Sprite_setPosition(sprite, (Window_getWidth() - sprite.w), position[1]);
-        Sprite_setVelocity(sprite, -velocity[0], velocity[1]);
-    }
-    if(position[1] <= 0) {
-        Sprite_setPosition(sprite, position[0], 0);
-        Sprite_setVelocity(sprite, velocity[0], -velocity[1]);
-    }else if(position[1] + sprite.h >= Window_getHeight()) {
-        Sprite_setPosition(sprite, position[0], Window_getHeight() - sprite.h);
-        Sprite_setVelocity(sprite, velocity[0], -velocity[1]);
-    }
+void moveEntityDown(Entity * entity) {
+    Entity_setVelocity(entity, 0, 200); 
 }
 
-//TODO: Implement sprite methods
-//TODO: Add controller methods to controller.h
-void Game_gameLoop() {
-    int quit = 0;
-    SDL_Surface * wSurface = NULL;
-    wSurface = SDL_GetWindowSurface(window);
-    
-    Sprite * paddle1 = Sprite_createSprite(100,100,"res/img/sprite.png");
-    Sprite * paddle2 = Sprite_createSprite(100,100,"res/img/sprite.png");
-    Sprite * ball = Sprite_createSprite(100,100,"res/img/sprite.png");
-
-    Game_keyHandlers(paddle1);
-
-    while(quit == false) {
-        //TODO: Process all events and hand them to the correct listeners
-        Game_processEvents();
-        Sprite_update(ball);
-        Game_checkCollisions(paddle1, ball);
-        Game_checkCollisions(paddle2, ball);
-        Game_checkWallCollisions(ball);
-        Sprite_render(paddle1);
-        Sprite_render(paddle2);
-        Sprite_render(ball);
-        quit = Game_processEvents();
-    }
+void moveEntityLeft(Entity * entity) {
+    Entity_setVelocity(entity, -200, 0); 
 }
 
-void Game_keyHandlers(Sprite * sprite) {
-    Command * moveUp = Controller_createCommand(sprite,sprite->moveUp);
-    Command * moveDown = Controller_createCommand(sprite,sprite->moveDown);
-    Command * moveLeft = Controller_createCommand(sprite,sprite->moveLeft);
-    Command * moveRight = Controller_createCommand(sprite,sprite->moveRight);
+void moveEntityRight(Entity * entity) {
+    Entity_setVelocity(entity, 200, 0); 
+}
+
+void Game_keyHandlers(Entity * entity) {
+    Command * moveUp = Controller_createCommand(entity,&moveEntityUp);
+    Command * moveDown = Controller_createCommand(entity,&moveEntityDown);
+    Command * moveLeft = Controller_createCommand(entity,&moveEntityLeft);
+    Command * moveRight = Controller_createCommand(entity,&moveEntityRight);
     Controller_mapKey(moveUp, SDLK_UP);
     Controller_mapKey(moveDown, SDLK_DOWN);
     Controller_mapKey(moveLeft, SDLK_LEFT);
     Controller_mapKey(moveRight, SDLK_RIGHT);
 }
 
-void Game_processEvents() {
+void Game_initGame() {
+    Sprite * playerSprite = Sprite_create(50,50,"res/img/sprite_scaled.png");
+    Sprite * eggSprite = Sprite_create(40,40, "res/img/egg.png");
+    srand(time(NULL));
+    double randomScreenX = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_WIDTH-40));
+    double randomScreenY = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_HEIGHT-40));
+
+    double spawnPositionEgg[2] = { randomScreenX, randomScreenY };
+    double spawnPosition[2] = { GAME_WINDOW_WIDTH/2, GAME_WINDOW_HEIGHT/2 };
+    int startingVelocity[2] = { GAME_STARTING_VELOCITY[0], GAME_STARTING_VELOCITY[1]};
+    int startingVelocityEgg[2] = {0,0};
+    egg = Entity_construct(spawnPositionEgg, startingVelocityEgg, eggSprite);
+    player = Entity_construct(spawnPosition, startingVelocity, playerSprite);
+    Game_keyHandlers(player);
+}
+
+void Game_update() {
+    Collision_checkWalls(player);
+    Entity_update(player);
+    if(Collision_checkEntities(player, egg)) {
+        srand(time(NULL));
+        double randomScreenX = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_WIDTH-40));
+        double randomScreenY = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_HEIGHT-40));
+        Entity_setPosition(egg,randomScreenX, randomScreenY);
+    }
+}
+
+void Game_render() {
+    SDL_RenderClear(Window_getRenderer());
+    Sprite_render(Entity_getSprite(egg), Entity_getPosition(egg), Window_getRenderer());
+    Sprite_render(Entity_getSprite(player), Entity_getPosition(player), Window_getRenderer());
+    SDL_RenderPresent(Window_getRenderer());
+}
+
+void Game_gameLoop() {
+    bool quit = false;
+    int frames = 0;
+    int start = SDL_GetTicks();
+    while(!quit) {
+        int frameStart = SDL_GetTicks();
+        quit = Game_processEvents();
+        Game_update();
+        Game_render();
+        SDL_Delay(10);
+        ++frames;
+        printf("average fps : %f\n", frames/((SDL_GetTicks()-start)/1000.0));
+    }
+    Entity_deconstruct(player);
+    Window_destroy();
+    Controller_destroy();
+}
+
+
+bool Game_processEvents() {
     SDL_Event e;
+    bool quit = false;
     while(SDL_PollEvent(&e) != 0) {
-        if(e.type == SDL_QUIT) {
-        }
         switch(e.type) {
             case SDL_QUIT:
                 quit = true;
@@ -115,9 +118,9 @@ void Game_processEvents() {
                 Controller_handleKeyDown(&e);
                 break;
             case SDL_KEYUP:
-                break;
-            case SDL_USEREVENT:
+                Controller_handleKeyUp(&e);
                 break;
         }
     }
+    return quit;
 }

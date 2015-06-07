@@ -3,14 +3,15 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "controller.h"
+#include "entity.h"
 #include "../lib/uthash.h"
 
 Command * keyMap = NULL;
 
 struct Command {
     int key;
-    Sprite * sprite;
-    void (*execute)(Sprite * sprite);
+    Entity * entity;
+    void (*execute)(Entity * entity);
     UT_hash_handle hh;
 };
 
@@ -21,9 +22,9 @@ Command * Controller_mapKey(Command * command, int key) {
     return oldCommand;
 }
 
-Command * Controller_createCommand(Sprite * sprite, void (*execute)(Sprite * sprite)) {
+Command * Controller_createCommand(Entity * entity, void (*execute)(Entity * entity)) {
     Command * cmd = malloc(sizeof(Command));
-    cmd->sprite = sprite;
+    cmd->entity = entity;
     cmd->execute = execute;
     return cmd;
 }
@@ -47,19 +48,19 @@ void Controller_destroy() {
 }
 
 void Controller_handleKeyDown(SDL_Event * e) {
-    if(e.key.repeat==0) {
-       Command * cmd = Controller_getCommand(e.key.keysym.sym);
+    if(e->key.repeat==0) {
+       Command * cmd = Controller_getCommand(e->key.keysym.sym);
        if(cmd != NULL) {
-            cmd->execute(cmd->sprite);
+            cmd->execute(cmd->entity);
        } 
     }
 }
 
 void Controller_handleKeyUp(SDL_Event * e) {
-    if(e.key.repeat==0) {
-       Command * cmd = Controller_getCommand(e.key.keysym.sym);
+    if(e->key.repeat==0) {
+       Command * cmd = Controller_getCommand(e->key.keysym.sym);
        if(cmd != NULL) {
-            cmd->execute(cmd->sprite);
+            cmd->execute(cmd->entity);
        } 
     }
 }
