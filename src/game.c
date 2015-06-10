@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "entity.h"
+#include "snake.h"
 #include "sprite.h"
 #include "controller.h"
 #include "window.h"
@@ -12,8 +13,10 @@
 bool Game_processEvents();
 void Game_gameLoop(); 
 void Game_initGame();
+void Game_keyHandlers();
+void Game_restart();
 
-Entity * player = NULL;
+Snake * player = NULL;
 Entity * egg = NULL;
 
 int main(int argc, char * args[]) {
@@ -21,32 +24,18 @@ int main(int argc, char * args[]) {
         return 1;
     } 
     Game_initGame();
+    Game_keyHandlers(player);
     Game_gameLoop();
     Window_destroy();
     return 0;
 }
 
-void moveEntityUp(Entity * entity) {
-    Entity_setVelocity(entity, 0, -200); 
-}
 
-void moveEntityDown(Entity * entity) {
-    Entity_setVelocity(entity, 0, 200); 
-}
-
-void moveEntityLeft(Entity * entity) {
-    Entity_setVelocity(entity, -200, 0); 
-}
-
-void moveEntityRight(Entity * entity) {
-    Entity_setVelocity(entity, 200, 0); 
-}
-
-void Game_keyHandlers(Entity * entity) {
-    Command * moveUp = Controller_createCommand(entity,&moveEntityUp);
-    Command * moveDown = Controller_createCommand(entity,&moveEntityDown);
-    Command * moveLeft = Controller_createCommand(entity,&moveEntityLeft);
-    Command * moveRight = Controller_createCommand(entity,&moveEntityRight);
+void Game_keyHandlers() {
+    Command * moveUp = Controller_createCommand(player,&Snake_moveUp);
+    Command * moveDown = Controller_createCommand(player,&Snake_moveDown);
+    Command * moveLeft = Controller_createCommand(player,&Snake_moveLeft);
+    Command * moveRight = Controller_createCommand(player,&Snake_moveRight);
     Controller_mapKey(moveUp, SDLK_UP);
     Controller_mapKey(moveDown, SDLK_DOWN);
     Controller_mapKey(moveLeft, SDLK_LEFT);
@@ -54,8 +43,8 @@ void Game_keyHandlers(Entity * entity) {
 }
 
 void Game_initGame() {
-    Sprite * playerSprite = Sprite_create(50,50,"res/img/sprite_scaled.png");
-    Sprite * eggSprite = Sprite_create(40,40, "res/img/egg.png");
+    Sprite * playerSprite = Sprite_create(30,30,"res/img/sprite_scaled.png");
+    Sprite * eggSprite = Sprite_create(30,30, "res/img/egg.png");
     srand(time(NULL));
     double randomScreenX = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_WIDTH-40));
     double randomScreenY = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_HEIGHT-40));
@@ -65,25 +54,36 @@ void Game_initGame() {
     int startingVelocity[2] = { GAME_STARTING_VELOCITY[0], GAME_STARTING_VELOCITY[1]};
     int startingVelocityEgg[2] = {0,0};
     egg = Entity_construct(spawnPositionEgg, startingVelocityEgg, eggSprite);
-    player = Entity_construct(spawnPosition, startingVelocity, playerSprite);
-    Game_keyHandlers(player);
+    player = Snake_create(playerSprite,spawnPosition);
 }
 
 void Game_update() {
-    Collision_checkWalls(player);
-    Entity_update(player);
-    if(Collision_checkEntities(player, egg)) {
-        srand(time(NULL));
-        double randomScreenX = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_WIDTH-40));
-        double randomScreenY = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_HEIGHT-40));
-        Entity_setPosition(egg,randomScreenX, randomScreenY);
+    Snake_update();
+    if(!Collision_checkWalls(Snake_getHead())) {
+        if(Collision_checkEntities(Snake_getHead(), egg)) {
+            srand(time(NULL));
+            double randomScreenX = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_WIDTH-40));
+            double randomScreenY = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_HEIGHT-40));
+            Entity_setPosition(egg,randomScreenX, randomScreenY);
+            Snake_add();
+        } 
+    } else {
+        Game_restart();
     }
+}
+
+void Game_restart() {
+   if(egg != NULL) {
+       Entity_deconstruct(egg);
+   }
+   Snake_destroy();
+   Game_initGame();
 }
 
 void Game_render() {
     SDL_RenderClear(Window_getRenderer());
     Sprite_render(Entity_getSprite(egg), Entity_getPosition(egg), Window_getRenderer());
-    Sprite_render(Entity_getSprite(player), Entity_getPosition(player), Window_getRenderer());
+    Snake_render();
     SDL_RenderPresent(Window_getRenderer());
 }
 
@@ -100,7 +100,8 @@ void Game_gameLoop() {
         ++frames;
         printf("average fps : %f\n", frames/((SDL_GetTicks()-start)/1000.0));
     }
-    Entity_deconstruct(player);
+    Snake_destroy();
+    Entity_deconstruct(egg);
     Window_destroy();
     Controller_destroy();
 }

@@ -10,8 +10,8 @@ Command * keyMap = NULL;
 
 struct Command {
     int key;
-    Entity * entity;
-    void (*execute)(Entity * entity);
+    void * entity;
+    void (*execute)(void * entity);
     UT_hash_handle hh;
 };
 
@@ -22,7 +22,7 @@ Command * Controller_mapKey(Command * command, int key) {
     return oldCommand;
 }
 
-Command * Controller_createCommand(Entity * entity, void (*execute)(Entity * entity)) {
+Command * Controller_createCommand(void * entity, void (*execute)(void * entity)) {
     Command * cmd = malloc(sizeof(Command));
     cmd->entity = entity;
     cmd->execute = execute;

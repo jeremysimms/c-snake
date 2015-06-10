@@ -41,20 +41,20 @@ bool Collision_checkWalls(Entity * entity) {
     int windowHeight; 
     Window_getSize(&windowWidth, &windowHeight);
     bool collisionDetected = false;
-    if(position[0] <= 0) {
+    if(position[0] < 0) {
         Entity_setPosition(entity, 0, position[1]);
         Entity_setVelocity(entity, -velocity[0], velocity[1]);
         collisionDetected = true;
-    } else if(position[0] + width >= windowWidth) {
+    } else if(position[0] + width > windowWidth) {
         Entity_setPosition(entity, (windowWidth - width), position[1]);
         Entity_setVelocity(entity, -velocity[0], velocity[1]);
         collisionDetected = true;
     }
-    if(position[1] <= 0) {
+    if(position[1] < 0) {
         Entity_setPosition(entity, position[0], 0);
         Entity_setVelocity(entity, velocity[0], -velocity[1]);
         collisionDetected = true;
-    }else if(position[1] + height >= windowHeight) {
+    }else if(position[1] + height > windowHeight) {
         Entity_setPosition(entity, position[0], windowHeight - height);
         Entity_setVelocity(entity, velocity[0], -velocity[1]);
         collisionDetected = true;
