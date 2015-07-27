@@ -8,7 +8,19 @@
 
 #include "sprite.h"
 
-typedef struct entity Entity;
+typedef struct entity {
+    double position[2];
+    int velocity[2];
+    Sprite * sprite;
+    
+    int collisionOffsetW;
+    int collisionOffsetH;
+
+    int collisionOffsetX;
+    int collisionOffsetY;
+
+    int lastUpdateTicks;
+} Entity;
 
 Entity * Entity_construct(double position[2], int velocity[2], Sprite * sprite);
 

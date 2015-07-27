@@ -26,7 +26,7 @@ SDL_Renderer * Window_createScreenRenderer() {
     if(renderer == NULL) {
         printf("ERROR: renderer has not been initialized!\n");
     } else {
-        SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        SDL_SetRenderDrawColor( renderer, 0x33, 0x99, 0xFF, 0xFF );
     }
     return renderer;
 }

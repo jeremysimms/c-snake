@@ -23,7 +23,7 @@ int Sprite_getHeight(Sprite * sprite) {
     return sprite->height;
 }
 
-Sprite * Sprite_create(int w, int h, char * image) {
+Sprite * Sprite_create(int w, int h, const char * image) {
     Sprite * sprite = malloc(sizeof(Sprite));
     sprite->height = h;
     sprite->width = w;

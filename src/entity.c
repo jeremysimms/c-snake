@@ -3,20 +3,6 @@
 #include "sprite.h"
 #include "entity.h"
 
-struct entity {
-    double position[2];
-    int velocity[2];
-    Sprite * sprite;
-    
-    int collisionOffsetW;
-    int collisionOffsetH;
-
-    int collisionOffsetX;
-    int collisionOffsetY;
-
-    int lastUpdateTicks;
-};
-
 Entity * Entity_construct(double position[2], int velocity[2], Sprite * sprite) {
     Entity * entity = malloc(sizeof(Entity));
     entity->sprite = sprite;

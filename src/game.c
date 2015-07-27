@@ -43,8 +43,9 @@ void Game_keyHandlers() {
 }
 
 void Game_initGame() {
-    Sprite * playerSprite = Sprite_create(30,30,"res/img/sprite_scaled.png");
-    Sprite * eggSprite = Sprite_create(30,30, "res/img/egg.png");
+    Sprite * headSprite = Sprite_create(40,40,PLAYER_HEAD_LOCATION);
+    Sprite * bodySprite = Sprite_create(40,40, PLAYER_BODY_LOCATION);
+    Sprite * eggSprite = Sprite_create(40,40, METAL_BALL_LOCATION);
     srand(time(NULL));
     double randomScreenX = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_WIDTH-40));
     double randomScreenY = ((double)rand() / ((double)RAND_MAX + 1) * (GAME_WINDOW_HEIGHT-40));
@@ -54,7 +55,7 @@ void Game_initGame() {
     int startingVelocity[2] = { GAME_STARTING_VELOCITY[0], GAME_STARTING_VELOCITY[1]};
     int startingVelocityEgg[2] = {0,0};
     egg = Entity_construct(spawnPositionEgg, startingVelocityEgg, eggSprite);
-    player = Snake_create(playerSprite,spawnPosition);
+    player = Snake_create(headSprite,bodySprite,spawnPosition);
 }
 
 void Game_update() {
