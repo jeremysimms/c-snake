@@ -97,7 +97,7 @@ void Game_gameLoop() {
         quit = Game_processEvents();
         Game_update();
         Game_render();
-        SDL_Delay(10);
+        SDL_Delay(1);
         ++frames;
         printf("average fps : %f\n", frames/((SDL_GetTicks()-start)/1000.0));
     }

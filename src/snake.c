@@ -17,7 +17,8 @@ typedef enum {
     DOWN
 } Direction;
 
-Sprite * sprite = NULL;
+Sprite * headSprite = NULL;
+Sprite * bodySprite = NULL;
 Snake * head = NULL;
 Snake * tail = NULL;
 Direction current = DOWN;
@@ -33,7 +34,9 @@ void Snake_update() {
         double y = 0;
         Snake_getNewCoords(&x, &y);
         Snake * tempHead = head;
+        tempHead->entity->sprite = bodySprite;
         head = Snake_removeTail();
+        head->entity->sprite = headSprite;
         head->next = tempHead;
         Entity_setPosition(head->entity, x, y);
         tail = Snake_getTail();
@@ -108,7 +111,7 @@ void Snake_add() {
     Snake_getNewCoords(&x, &y);
     double position[2] = { x , y };
     int velocity[2] = { 0, 0 };
-    Entity * newEntity = Entity_construct(position, velocity, sprite);
+    Entity * newEntity = Entity_construct(position, velocity, bodySprite);
     newTail->entity = newEntity;
     newTail->next = NULL;
     tail->next = newTail;
@@ -162,11 +165,12 @@ void Snake_render() {
     }
 }
 
-Snake * Snake_create(Sprite * snakeSprite, double position[2]) {
-    sprite = snakeSprite;
+Snake * Snake_create(Sprite * headSpr, Sprite * bodySpr, double position[2]) {
+    headSprite = headSpr;
+    bodySprite = bodySpr;
     head = malloc(sizeof(Snake));
     int velocity[2] = { 0,0 };
-    head->entity = Entity_construct(position, velocity, sprite);
+    head->entity = Entity_construct(position, velocity, headSprite);
     head->next = NULL;
     tail = head;
     Snake_add();
