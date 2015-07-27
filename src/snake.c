@@ -21,9 +21,11 @@ Sprite * headSprite = NULL;
 Sprite * bodySprite = NULL;
 Snake * head = NULL;
 Snake * tail = NULL;
+int segmentsToAdd = 0;
 Direction current = DOWN;
-Uint32 ticks = 0;
 
+
+Uint32 ticks = 0;
 Snake * Snake_getTail();
 Snake * Snake_removeTail();
 void Snake_getNewCoords(double * x, double * y);
@@ -35,9 +37,19 @@ void Snake_update() {
         Snake_getNewCoords(&x, &y);
         Snake * tempHead = head;
         tempHead->entity->sprite = bodySprite;
-        head = Snake_removeTail();
-        head->entity->sprite = headSprite;
-        head->next = tempHead;
+        if(segmentsToAdd == 0) {
+            head = Snake_removeTail();
+            head->entity->sprite = headSprite;
+            head->next = tempHead;
+        } else {
+            segmentsToAdd--;
+            head = malloc(sizeof(Snake));
+            int velocity[2] = { 0, 0 };
+            double position[2] = { x, y };
+            Entity * newEntity = Entity_construct(position, velocity, headSprite);
+            head->entity = newEntity;
+            head->next = tempHead;
+        }
         Entity_setPosition(head->entity, x, y);
         tail = Snake_getTail();
         ticks = SDL_GetTicks();
@@ -105,17 +117,9 @@ Snake * Snake_getTail() {
 }
 
 void Snake_add() {
-    Snake * newTail = malloc(sizeof(Snake));
-    double x = 0;
-    double y = 0;
-    Snake_getNewCoords(&x, &y);
-    double position[2] = { x , y };
-    int velocity[2] = { 0, 0 };
-    Entity * newEntity = Entity_construct(position, velocity, bodySprite);
-    newTail->entity = newEntity;
-    newTail->next = NULL;
-    tail->next = newTail;
-    tail = newTail;
+    if(segmentsToAdd < 4) {
+        segmentsToAdd++;
+    }
 }
 
 void Snake_moveUp(void * snake) {
@@ -173,8 +177,6 @@ Snake * Snake_create(Sprite * headSpr, Sprite * bodySpr, double position[2]) {
     head->entity = Entity_construct(position, velocity, headSprite);
     head->next = NULL;
     tail = head;
-    Snake_add();
-    Snake_add();
     Snake_add();
     return head;
 }
