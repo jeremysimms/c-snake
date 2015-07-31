@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "entity.h"
+#include "window.h"
 
 bool Collision_checkEntities(Entity * entity1, Entity * entity2) {
     double * entity1Position = Entity_getPosition(entity1);

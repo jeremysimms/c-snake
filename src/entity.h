@@ -35,6 +35,9 @@ void Entity_setPosition(Entity * entity, double x, double y);
 int * Entity_getVelocity(Entity * entity);
 double * Entity_getPosition(Entity * entity);
 
+int Entity_getWidth(Entity * entity);
+int Entity_getHeight(Entity * entity);
+
 int Entity_getOffsetY(Entity * entity);
 int Entity_getOffsetX(Entity * entity);
 

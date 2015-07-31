@@ -1,11 +1,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <stdbool.h>
 #include "entity.h"
 #include "snake.h"
 #include "sprite.h"
 #include "controller.h"
+#include "collision.h"
 #include "window.h"
 #include "consts.h"
 

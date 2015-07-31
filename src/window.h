@@ -9,8 +9,8 @@
 SDL_Window * Window_getWindow();
 SDL_Renderer * Window_getRenderer();
 bool Window_init(const char * title, const int width, const int height);
-void Window_setSize(int * w, int * h);
-void Window_getSize(int w, int h);
+void Window_setSize(int w, int h);
+void Window_getSize(int * w, int * h);
 void Window_setFullScreen();
 void Window_destroy();
 

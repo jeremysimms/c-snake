@@ -15,6 +15,7 @@ Entity * Entity_construct(double position[2], int velocity[2], Sprite * sprite) 
     entity->collisionOffsetX = 0;
     entity->collisionOffsetY = 0;
     entity->lastUpdateTicks = 0;
+    return entity;
 }
 
 void Entity_deconstruct(Entity * entity) {
