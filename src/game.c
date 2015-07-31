@@ -105,7 +105,7 @@ void Game_getRandomSpawn(double * positionVector) {
 
 void Game_update() {
     Snake_update();
-    if(!Collision_checkWalls(Snake_getHead())) {
+    if(!(Collision_checkWalls(Snake_getHead()) || Snake_checkCollisions())) {
         if(Collision_checkEntities(Snake_getHead(), metalBall)) {
             double positionVector[2] = {0,0};
             Game_getRandomSpawn(positionVector);

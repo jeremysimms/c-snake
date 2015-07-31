@@ -4,6 +4,7 @@
 #include "snake.h"
 #include "sprite.h"
 #include "window.h"
+#include "collision.h"
 
 struct snake {
     Entity * entity;
@@ -55,19 +56,6 @@ void Snake_update() {
         Entity_setPosition(head->entity, x, y);
         tail = Snake_getTail();
         ticks = SDL_GetTicks();
-    }
-}
-
-void Snake_truncate(int length) {
-    Snake * curr = head;
-    int count;
-    while(curr->next != NULL) {
-        if(count >= length) {
-           Snake * delete = curr;
-           free(delete);
-        }
-        curr = curr->next;
-        count++;
     }
 }
 
@@ -188,4 +176,18 @@ Snake * Snake_create(Sprite * headSpr, Sprite * bodySpr, double position[2]) {
     tail = head;
     length = 1; 
     return head;
+}
+
+bool Snake_checkCollisions() {
+    if(length > 1) {
+        Snake * curr = head->next;
+        while(curr->next != NULL) {
+            if(Collision_checkEntities(curr->entity, head->entity)) {
+                return true;
+            }
+            curr = curr->next;
+        }
+        return Collision_checkEntities(curr->entity, head->entity);
+    }
+    return false; 
 }
