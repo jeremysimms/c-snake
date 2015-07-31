@@ -26,7 +26,7 @@ Entity * metalBall = NULL;
 SDL_Texture * metalBallTexture = NULL;
 SDL_Texture * snakeHeadTexture = NULL;
 SDL_Texture * snakeBodyTexture = NULL;
-bool paused = false;
+bool paused = true;
 
 int main(int argc, char * args[]) {
     srand(time(NULL));

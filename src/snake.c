@@ -22,9 +22,8 @@ Sprite * bodySprite = NULL;
 Snake * head = NULL;
 Snake * tail = NULL;
 int segmentsToAdd = 0;
+int length = 0;
 Direction current = DOWN;
-
-
 Uint32 ticks = 0;
 Snake * Snake_getTail();
 Snake * Snake_removeTail();
@@ -36,13 +35,16 @@ void Snake_update() {
         double y = 0;
         Snake_getNewCoords(&x, &y);
         Snake * tempHead = head;
-        tempHead->entity->sprite = bodySprite;
-        if(segmentsToAdd == 0) {
+        if(length > 1) {
+            tempHead->entity->sprite = bodySprite;
+        }
+        if(segmentsToAdd == 0 && length > 1) {
             head = Snake_removeTail();
             head->entity->sprite = headSprite;
             head->next = tempHead;
-        } else {
+        } else if(segmentsToAdd > 0) {
             segmentsToAdd--;
+            length++; 
             head = malloc(sizeof(Snake));
             int velocity[2] = { 0, 0 };
             double position[2] = { x, y };
@@ -123,25 +125,25 @@ void Snake_add() {
 }
 
 void Snake_moveUp(void * snake) {
-    if(current != DOWN) {
+    if(current != DOWN || length == 1) {
         current = UP;
     }
 }
 
 void Snake_moveDown(void * snake) {
-    if(current != UP) {
+    if(current != UP || length == 1) {
         current = DOWN;
     }
 }
 
 void  Snake_moveLeft(void * snake) {
-    if(current != RIGHT) {
+    if(current != RIGHT || length == 1) {
         current = LEFT;
     }
 }
 
 void Snake_moveRight(void * snake) {
-    if(current != LEFT) {
+    if(current != LEFT || length == 1) {
         current = RIGHT;
     }
 }
@@ -159,13 +161,18 @@ void Snake_destroy() {
     free(curr);
     curr = NULL;
     head = NULL;
+    length = 0; 
 }
 
 void Snake_render() {
     Snake * curr = head;
+    Sprite_render(Entity_getSprite(curr->entity), Entity_getPosition(curr->entity), Window_getRenderer());
     while(curr->next != NULL) {
         Sprite_render(Entity_getSprite(curr->entity), Entity_getPosition(curr->entity), Window_getRenderer());
         curr = curr->next;
+    }
+    if(length > 1) {
+        Sprite_render(Entity_getSprite(curr->entity), Entity_getPosition(curr->entity), Window_getRenderer());
     }
 }
 
@@ -175,8 +182,10 @@ Snake * Snake_create(Sprite * headSpr, Sprite * bodySpr, double position[2]) {
     head = malloc(sizeof(Snake));
     int velocity[2] = { 0,0 };
     head->entity = Entity_construct(position, velocity, headSprite);
+    printf("sprite position x: %f\n", position[0]);
+    printf("sprite position y: %f\n", position[1]);
     head->next = NULL;
     tail = head;
-    Snake_add();
+    length = 1; 
     return head;
 }
