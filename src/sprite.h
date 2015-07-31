@@ -7,7 +7,7 @@
 
 typedef struct sprite Sprite;
 
-Sprite * Sprite_create(int w, int h, const char * spritesheet);
+Sprite * Sprite_create(int w, int h, SDL_Texture * texture);
 
 void Sprite_destroy(Sprite * sprite);
 void Sprite_render(Sprite * sprite, double * position, SDL_Renderer * renderer);

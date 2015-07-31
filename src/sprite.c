@@ -23,12 +23,11 @@ int Sprite_getHeight(Sprite * sprite) {
     return sprite->height;
 }
 
-Sprite * Sprite_create(int w, int h, const char * image) {
+Sprite * Sprite_create(int w, int h, SDL_Texture * texture) {
     Sprite * sprite = malloc(sizeof(Sprite));
     sprite->height = h;
     sprite->width = w;
-    sprite->spriteSheet = IMG_Load(image);
-    sprite->texture =  SDL_CreateTextureFromSurface(Window_getRenderer(), sprite->spriteSheet);
+    sprite->texture =  texture;
     if(sprite->spriteSheet == NULL) {
         char cwd[1024];
         getcwd(cwd, sizeof(cwd));
@@ -39,11 +38,10 @@ Sprite * Sprite_create(int w, int h, const char * image) {
 }
 
 void Sprite_destroy(Sprite *sprite) {
-    SDL_FreeSurface(sprite->spriteSheet);
-    SDL_DestroyTexture(sprite->texture);
-    sprite->spriteSheet = NULL;
-    sprite->texture = NULL;
-    free(sprite);
+    if(sprite != NULL) {
+        sprite->texture = NULL;
+        free(sprite);
+    }
 }
 
 void Sprite_render(Sprite *sprite, double * position, SDL_Renderer * renderer) {

@@ -150,7 +150,7 @@ void Snake_destroy() {
     Snake * curr = head;
     while(curr->next != NULL) {
         if(curr->entity != NULL) {
-            Entity_deconstruct(head->entity);
+            Entity_deconstruct(curr->entity);
         }
         Snake * delete = curr;
         free(delete);

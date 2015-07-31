@@ -19,8 +19,7 @@ Entity * Entity_construct(double position[2], int velocity[2], Sprite * sprite) 
 }
 
 void Entity_deconstruct(Entity * entity) {
-    if(entity->sprite != NULL) {
-        Sprite_destroy(entity->sprite);
+    if(entity != NULL) {
         free(entity);
     }
 }

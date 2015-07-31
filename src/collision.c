@@ -18,11 +18,10 @@ bool Collision_checkEntities(Entity * entity1, Entity * entity2) {
     int entity2W = Entity_getOffsetW(entity2);
     int entity2H = Entity_getOffsetH(entity2);
 
-    if(!(entity1X + entity1W < entity2X || entity1X > entity2X + entity2W)) {
-        if(!(entity1Y + entity1H < entity2Y || entity1Y > entity2Y + entity2H)) {
+    if(!(entity1X + entity1W <= entity2X || entity1X >= entity2X + entity2W)) {
+        if(!(entity1Y + entity1H <= entity2Y || entity1Y >= entity2Y + entity2H)) {
             printf("ENTITY 1 X: %f\n", entity1Position[0]);
             printf("ENTITY 1 Y: %f\n", entity1Position[1]);
-
             printf("ENTITY 2 X: %f\n", entity2Position[0]);
             printf("ENTITY 2 Y: %f\n", entity2Position[1]);
             return true;
@@ -33,7 +32,6 @@ bool Collision_checkEntities(Entity * entity1, Entity * entity2) {
 
 
 bool Collision_checkWalls(Entity * entity) {
-
     double * position = Entity_getPosition(entity);
     int * velocity = Entity_getVelocity(entity);
     int width = Entity_getWidth(entity);
