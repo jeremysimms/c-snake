@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include "entity.h"
 #include "snake.h"
@@ -138,13 +139,13 @@ void Snake_moveRight(void * snake) {
 
 void Snake_destroy() {
     Snake * curr = head;
-    while(curr->next != NULL) {
+    while(curr != NULL && curr != 0) {
         if(curr->entity != NULL) {
             Entity_deconstruct(curr->entity);
         }
         Snake * delete = curr;
-        free(delete);
         curr = curr->next;
+        free(delete);
     }
     free(curr);
     curr = NULL;
@@ -181,13 +182,12 @@ Snake * Snake_create(Sprite * headSpr, Sprite * bodySpr, double position[2]) {
 bool Snake_checkCollisions() {
     if(length > 1) {
         Snake * curr = head->next;
-        while(curr->next != NULL) {
+        while(curr != NULL && curr != 0) {
             if(Collision_checkEntities(curr->entity, head->entity)) {
                 return true;
             }
             curr = curr->next;
         }
-        return Collision_checkEntities(curr->entity, head->entity);
     }
     return false; 
 }
