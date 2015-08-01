@@ -36,9 +36,6 @@ void Snake_update() {
         double y = 0;
         Snake_getNewCoords(&x, &y);
         Snake * tempHead = head;
-        if(length > 1) {
-            tempHead->entity->sprite = bodySprite;
-        }
         if(segmentsToAdd == 0 && length > 1) {
             head = Snake_removeTail();
             head->entity->sprite = headSprite;
@@ -52,6 +49,9 @@ void Snake_update() {
             Entity * newEntity = Entity_construct(position, velocity, headSprite);
             head->entity = newEntity;
             head->next = tempHead;
+        }
+        if(length > 1) {
+            tempHead->entity->sprite = bodySprite;
         }
         Entity_setPosition(head->entity, x, y);
         tail = Snake_getTail();
