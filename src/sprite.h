@@ -15,4 +15,6 @@ void Sprite_render(Sprite * sprite, double * position, SDL_Renderer * renderer);
 int Sprite_getWidth(Sprite * sprite);
 int Sprite_getHeight(Sprite * sprite);
 
+void Sprite_setTextureCoords(Sprite * sprite, int textureX, int textureY);
+
 #endif
