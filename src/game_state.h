@@ -11,4 +11,5 @@ typedef struct game_state {
 } * GameState;
 
 GameState GameState_create();
+void GameState_destroy(GameState state);
 #endif

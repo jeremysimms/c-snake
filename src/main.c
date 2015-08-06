@@ -20,6 +20,7 @@ Uint32 MAINMENU_STATE_EVENT;
 
 void gameLoop();
 void initStates();
+void destroyStates();
 void handleUserEvent(SDL_Event * e);
 
 int main(int argc, char * args[]) {
@@ -32,6 +33,7 @@ int main(int argc, char * args[]) {
     CONTROLS_STATE_EVENT = PLAYING_STATE_EVENT+1;
     MAINMENU_STATE_EVENT = PLAYING_STATE_EVENT+2;
     gameLoop();
+    destroyStates();
     Window_destroy();
     return 0;
 }
@@ -58,6 +60,12 @@ bool processEvents() {
 void initStates() {
     playingState = PlayingState_get();
     currentState = playingState;
+}
+
+void destroyStates() {
+    GameState_destroy(playingState);
+    playingState = NULL;
+    currentState = NULL;
 }
 
 void handleUserEvent(SDL_Event * e) {
