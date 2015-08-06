@@ -1,7 +1,7 @@
 CC=gcc
 SRC_DIR=src/
 BIN_DIR=bin/
-OBJS=$(addprefix $(SRC_DIR), snake.c entity.c window.c collision.c sprite.c controller.c game.c)
+OBJS=$(addprefix $(SRC_DIR), consts.c game_state.c snake.c entity.c window.c collision.c sprite.c controller.c playing_state.c main.c)
 OUT=game
 OUT_DEBUG=game
 
