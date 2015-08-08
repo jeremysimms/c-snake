@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "sprite.h"
 #include "entity.h"
+#include "debug.h"
 
 Entity * Entity_construct(double position[2], int velocity[2], Sprite * sprite) {
     Entity * entity = malloc(sizeof(Entity));
@@ -29,7 +30,7 @@ void Entity_update(Entity * entity) {
     int elapsedTime = SDL_GetTicks() - entity->lastUpdateTicks;
     entity->position[0] += (double)(entity->velocity[0]/1000.0)*elapsedTime;
     entity->position[1] += (double) (entity->velocity[1]/1000.0)*elapsedTime;
-    printf("POSITION: x: %f, y: %f\n",entity->position[0], entity->position[1]); 
+    debug_print("POSITION: x: %f, y: %f\n",entity->position[0], entity->position[1]); 
     entity->lastUpdateTicks = SDL_GetTicks();
 }
 

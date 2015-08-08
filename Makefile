@@ -1,16 +1,16 @@
-CC=gcc
+CC=c99
 SRC_DIR=src
 BIN_DIR=bin
 OBJ_DIR=obj
 INC_DIR=include
 
 SRC=$(wildcard $(SRC_DIR)/*.c)
-#SRC=src/main.c src/consts.c src/controller.c
 OBJS=$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 OUT=game
 OUT_DEBUG=game
 
 CFLAGS=$(shell sdl2-config --cflags) 
+DEBUG_FLAGS=-DDEBUG_TEST
 INC=-I$(INC_DIR)/
 LIBS=$(shell sdl2-config --libs)
 OTHER_LIB=-lSDL2_image
@@ -20,10 +20,10 @@ all: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT)) $^
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
-debug: $(OBJS);
-	$(CC) $(OBJS) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR),$(OUT_DEBUG)) $(DEBUG)
+debug: $(OBJS)
+	$(CC) $(DEBUG) $(CFLAGS) $(LIBS) $(OTHER_LIB) $(DEBUG_FLAGS)  -o $(addprefix $(BIN_DIR)/,$(OUT)_debug) $^
 
 clean:
 	rm -f $(BIN_DIR)/*

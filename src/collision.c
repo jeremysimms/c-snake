@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "entity.h"
 #include "window.h"
+#include "debug.h"
 
 bool Collision_checkEntities(Entity * entity1, Entity * entity2) {
     double * entity1Position = Entity_getPosition(entity1);
@@ -20,10 +21,10 @@ bool Collision_checkEntities(Entity * entity1, Entity * entity2) {
 
     if(!(entity1X + entity1W <= entity2X || entity1X >= entity2X + entity2W)) {
         if(!(entity1Y + entity1H <= entity2Y || entity1Y >= entity2Y + entity2H)) {
-            printf("ENTITY 1 X: %f\n", entity1Position[0]);
-            printf("ENTITY 1 Y: %f\n", entity1Position[1]);
-            printf("ENTITY 2 X: %f\n", entity2Position[0]);
-            printf("ENTITY 2 Y: %f\n", entity2Position[1]);
+            debug_print("ENTITY 1 X: %f\n", entity1Position[0]);
+            debug_print("ENTITY 1 Y: %f\n", entity1Position[1]);
+            debug_print("ENTITY 2 X: %f\n", entity2Position[0]);
+            debug_print("ENTITY 2 Y: %f\n", entity2Position[1]);
             return true;
         }
     }

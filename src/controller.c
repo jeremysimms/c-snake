@@ -5,6 +5,7 @@
 #include "controller.h"
 #include "entity.h"
 #include "../lib/uthash.h"
+#include "debug.h"
 
 Command * keyMap = NULL;
 
@@ -33,7 +34,7 @@ Command * Controller_getCommand(int key) {
     Command * found;
     HASH_FIND_INT(keyMap,&key,found);
     if(found == NULL) {
-        printf("NO COMMAND FOUND\n");
+        debug_print("%s\n","NO COMMAND FOUND");
     }
     return found;
 }

@@ -12,10 +12,11 @@
 #include "window.h"
 #include "consts.h"
 #include "game_state.h"
+#include "debug.h"
 
 void PlayingState_start();
 void PlayingState_tick(); 
-void PlayingState_init();;
+void PlayingState_init();
 void PlayingState_keyHandlers();
 void PlayingState_destroy();
 void PlayingState_restart();
@@ -31,9 +32,9 @@ SDL_Texture * snakeBodyTexture = NULL;
 bool paused = true;
 int start = 0;
 int frames = 0;
-GameState state = NULL;
 
 GameState PlayingState_get() {
+    GameState state = NULL;
     if(state == NULL) {
         state = GameState_create();
         state->tick = &PlayingState_tick;
@@ -54,13 +55,13 @@ void PlayingState_loadTextures() {
     SDL_Surface * snakeHeadSurface = IMG_Load(PLAYER_HEAD_LOCATION);
     SDL_Surface * snakeBodySurface = IMG_Load(PLAYER_BODY_LOCATION);
     if(metalBallSurface == NULL || snakeHeadSurface == NULL || snakeBodySurface == NULL) {
-        printf("Error loading image. SDL Error: %s\n", IMG_GetError());
+        debug_print("Error loading image. SDL Error: %s\n", IMG_GetError());
     }
     metalBallTexture = SDL_CreateTextureFromSurface(Window_getRenderer(), metalBallSurface);
     snakeHeadTexture = SDL_CreateTextureFromSurface(Window_getRenderer(), snakeHeadSurface);
     snakeBodyTexture = SDL_CreateTextureFromSurface(Window_getRenderer(), snakeBodySurface);
     if(metalBallTexture == NULL || snakeHeadTexture == NULL || snakeBodyTexture == NULL) {
-        printf("Error creating texture. SDL Error: %s\n", SDL_GetError());
+        debug_print("Error creating texture. SDL Error: %s\n", SDL_GetError());
     }
     SDL_FreeSurface(metalBallSurface);
     SDL_FreeSurface(snakeHeadSurface);
@@ -96,7 +97,6 @@ void PlayingState_init() {
 void PlayingState_destroy() {
     Snake_destroy();
     Entity_deconstruct(metalBall);
-    Controller_destroy();
     PlayingState_destroyTextures(); 
 }
 
@@ -158,6 +158,6 @@ void PlayingState_tick() {
     PlayingState_render();
     SDL_Delay(1);
     ++frames;
-    printf("average fps : %f\n", frames/((SDL_GetTicks()-start)/1000.0));
+    debug_print("average fps : %f\n", frames/((SDL_GetTicks()-start)/1000.0));
 }
 

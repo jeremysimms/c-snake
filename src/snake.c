@@ -6,6 +6,7 @@
 #include "sprite.h"
 #include "window.h"
 #include "collision.h"
+#include "debug.h"
 
 struct snake {
     Entity * entity;
@@ -171,8 +172,8 @@ Snake * Snake_create(Sprite * headSpr, Sprite * bodySpr, double position[2]) {
     head = malloc(sizeof(Snake));
     int velocity[2] = { 0,0 };
     head->entity = Entity_construct(position, velocity, headSprite);
-    printf("sprite position x: %f\n", position[0]);
-    printf("sprite position y: %f\n", position[1]);
+    debug_print("sprite position x: %f\n", position[0]);
+    debug_print("sprite position y: %f\n", position[1]);
     head->next = NULL;
     tail = head;
     length = 1; 

@@ -34,6 +34,7 @@ int main(int argc, char * args[]) {
     MAINMENU_STATE_EVENT = PLAYING_STATE_EVENT+2;
     gameLoop();
     destroyStates();
+    Controller_destroy();
     Window_destroy();
     return 0;
 }
