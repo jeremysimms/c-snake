@@ -10,5 +10,4 @@ Command * Controller_mapKey(Command * command, int key);
 void Controller_handleKeyDown(SDL_Event * e);
 void Controller_handleKeyUp(SDL_Event * e);
 void Controller_destroy();
-void Controller_poll(SDL_Event * e);
 

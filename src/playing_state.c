@@ -19,35 +19,49 @@ void PlayingState_tick();
 void PlayingState_init();
 void PlayingState_keyHandlers();
 void PlayingState_destroy();
+void PlayingState_update();
+void PlayingState_render();
+void PlayingState_pause();
 void PlayingState_restart();
+void PlayingState_handleEvents(GameStateEngine engine, SDL_Event * e);
 void PlayingState_getRandomSpawn(double * positionVector);
 void PlayingState_loadTextures();
 void PlayingState_destroyTextures();
 
+
+bool paused = false;
 Snake * player = NULL;
 Entity * metalBall = NULL;
 SDL_Texture * metalBallTexture = NULL;
 SDL_Texture * snakeHeadTexture = NULL;
 SDL_Texture * snakeBodyTexture = NULL;
-bool paused = true;
-int start = 0;
-int frames = 0;
+GameState gameState = NULL;
 
 GameState PlayingState_get() {
-    GameState state = NULL;
-    if(state == NULL) {
+    if(gameState == NULL) {
+        GameState state;
         state = GameState_create();
-        state->tick = &PlayingState_tick;
+        state->update = &PlayingState_update;
         state->init = &PlayingState_init;
+        state->render = &PlayingState_render;;
         state->destroy = &PlayingState_destroy;
+        state->handleEvents = &PlayingState_handleEvents;
+        state->pause = &PlayingState_pause;
+        gameState = state;
     }
-    return state;
+    return gameState;
 }
 
 void PlayingState_destroyTextures() {
     SDL_DestroyTexture(metalBallTexture);
     SDL_DestroyTexture(snakeHeadTexture);
     SDL_DestroyTexture(snakeBodyTexture);
+}
+
+void PlayingState_handleEvents(GameStateEngine engine, SDL_Event * e) {
+    if(e->type == SDL_KEYDOWN) {
+        Controller_handleKeyDown(e);
+    }
 }
 
 void PlayingState_loadTextures() {
@@ -68,12 +82,6 @@ void PlayingState_loadTextures() {
     SDL_FreeSurface(snakeBodySurface);
 }
 
-void PlayingState_pause() {
-    if(paused) {
-        paused = false;
-    }
-}
-
 void PlayingState_keyHandlers() {
     Command * moveUp = Controller_createCommand(player,&Snake_moveUp);
     Command * moveDown = Controller_createCommand(player,&Snake_moveDown);
@@ -91,13 +99,19 @@ void PlayingState_init() {
     PlayingState_loadTextures();
     PlayingState_keyHandlers();
     PlayingState_start();
-    start = SDL_GetTicks();
 }
 
 void PlayingState_destroy() {
     Snake_destroy();
     Entity_deconstruct(metalBall);
     PlayingState_destroyTextures(); 
+    free(gameState);
+    gameState = NULL;
+}
+
+void PlayingState_pause() {
+    if(paused) paused = false;
+    else paused = true; 
 }
 
 void PlayingState_start() {
@@ -120,7 +134,7 @@ void PlayingState_getRandomSpawn(double * positionVector) {
 }
 
 void PlayingState_update() {
-    Snake_update();
+    if(!paused)  Snake_update();
     if(!(Collision_checkWalls(Snake_getHead()) || Snake_checkCollisions())) {
         if(Collision_checkEntities(Snake_getHead(), metalBall)) {
             double positionVector[2] = {0,0};
@@ -129,18 +143,18 @@ void PlayingState_update() {
             Snake_add();
         } 
     } else if(!paused) {
-        paused = true;
+        PlayingState_pause();
         PlayingState_restart();
     }
 }
 
 void PlayingState_restart() {
+   paused = true;
    if(metalBall != NULL) {
        Entity_deconstruct(metalBall);
    }
    Snake_destroy();
    PlayingState_start();
-   paused = true;
 }
 
 void PlayingState_render() {
@@ -148,16 +162,5 @@ void PlayingState_render() {
     Sprite_render(Entity_getSprite(metalBall), Entity_getPosition(metalBall), Window_getRenderer());
     Snake_render();
     SDL_RenderPresent(Window_getRenderer());
-}
-
-void PlayingState_tick() {
-    int frameStart = SDL_GetTicks();
-    if(!paused) {
-        PlayingState_update();
-    }
-    PlayingState_render();
-    SDL_Delay(1);
-    ++frames;
-    debug_print("average fps : %f\n", frames/((SDL_GetTicks()-start)/1000.0));
 }
 
