@@ -1,10 +1,10 @@
-#ifndef MAIN_MENU_DEFINITION
-#define MAIN_MENU_DEFINITION
+#ifndef MAIN_MENU_STATE_DEFINITION
+#define MAIN_MENU_STATE_DEFINITION
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "game_state.h"
 
-GameState MainMenu_get();
+GameState MainMenuState_get();
 
 #endif

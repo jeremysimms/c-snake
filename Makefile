@@ -9,16 +9,16 @@ SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJS=$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 OUT=game
 CFLAGS=$(shell sdl2-config --cflags) -lm
-DEBUG_FLAGS=-DDEBUG_TEST
 INC=-I$(INC_DIR)/
 LIBS=$(shell sdl2-config --libs)
-OTHER_LIB=-lSDL2_image
+OTHER_LIB=-lSDL2_image -lSDL2_mixer
 ifeq ($(OS), Darwin)
-	DEBUG=-ggdb 
-else 
 	DEBUG=-g
+else 
+	DEBUG=-ggdb
 endif
 debug: CFLAGS += $(DEBUG)
+debug: CFLAGS += -DDEBUG_TEST
 
 all: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT)) $^

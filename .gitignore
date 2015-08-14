@@ -1,5 +1,6 @@
-.ycm_extra_config.py
-.ycm_extra_config.pyc
+.*
+.ycm_extra_conf.py
+.ycm_extra_conf.pyc
 .*.sw*
 bin/*
 *.o

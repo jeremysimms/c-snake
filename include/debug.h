@@ -1,8 +1,10 @@
 #ifndef DEBUG_DEFINITION
 #define DEBUG_DEFINITION
 
-#ifndef DEBUG
+#ifdef DEBUG_TEST
 #define DEBUG 1
+#else
+#define DEBUG 0
 #endif
 
 #define debug_print(fmt, ...) \

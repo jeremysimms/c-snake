@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "game_state.h"
 #include "button.h"
+#include "controller.h"
 
 void MainMenu_init();
 void MainMenu_destroy();

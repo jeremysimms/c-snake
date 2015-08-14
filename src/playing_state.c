@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -26,9 +27,13 @@ void PlayingState_restart();
 void PlayingState_handleEvents(GameStateEngine engine, SDL_Event * e);
 void PlayingState_getRandomSpawn(double * positionVector);
 void PlayingState_loadTextures();
+void PlayingState_loadSounds();
+void PlayingState_destroySounds();
 void PlayingState_destroyTextures();
 
-
+Mix_Music * music = NULL;
+Mix_Chunk * eatSound = NULL;
+Mix_Chunk * deathSound = NULL;
 bool paused = false;
 Snake * player = NULL;
 Entity * metalBall = NULL;
@@ -58,6 +63,15 @@ void PlayingState_destroyTextures() {
     SDL_DestroyTexture(snakeBodyTexture);
 }
 
+void PlayingState_destroySounds() {
+    Mix_FreeChunk(eatSound);
+    Mix_FreeChunk(deathSound);
+    Mix_FreeMusic(music);
+    music = NULL;
+    eatSound = NULL;
+    deathSound = NULL;
+}
+
 void PlayingState_handleEvents(GameStateEngine engine, SDL_Event * e) {
     if(e->type == SDL_KEYDOWN) {
         Controller_handleKeyDown(e);
@@ -82,6 +96,21 @@ void PlayingState_loadTextures() {
     SDL_FreeSurface(snakeBodySurface);
 }
 
+void PlayingState_loadSounds() {
+    eatSound  = Mix_LoadWAV("res/wav/eat.wav");
+    if(eatSound == NULL) {
+        debug_print("Failed to load sound. Mix error: %s", Mix_GetError());
+    }
+    deathSound = Mix_LoadWAV("res/wav/death.wav");
+    if(deathSound == NULL) {
+        debug_print("Failed to load sound. Mix error: %s", Mix_GetError());
+    }
+    music = Mix_LoadMUS("res/wav/music.wav");
+    if(music == NULL) {
+        debug_print("Failed to load sound. Mix error: %s", Mix_GetError());
+    }
+}
+
 void PlayingState_keyHandlers() {
     Command * moveUp = Controller_createCommand(player,&Snake_moveUp);
     Command * moveDown = Controller_createCommand(player,&Snake_moveDown);
@@ -97,14 +126,17 @@ void PlayingState_keyHandlers() {
 
 void PlayingState_init() {
     PlayingState_loadTextures();
+    PlayingState_loadSounds();
     PlayingState_keyHandlers();
     PlayingState_start();
+
 }
 
 void PlayingState_destroy() {
     Snake_destroy();
     Entity_deconstruct(metalBall);
     PlayingState_destroyTextures(); 
+    PlayingState_destroySounds();
     free(gameState);
     gameState = NULL;
 }
@@ -115,6 +147,10 @@ void PlayingState_pause() {
 }
 
 void PlayingState_start() {
+    if(Mix_PlayingMusic()==0) {
+        Mix_PlayMusic(music, -1);
+        Mix_VolumeMusic(60);
+    }
     Sprite * headSprite = Sprite_create(40,40,snakeHeadTexture);
     Sprite * bodySprite = Sprite_create(40,40, snakeBodyTexture);
     Sprite * metalBallSprite = Sprite_create(40,40, metalBallTexture);
@@ -137,12 +173,14 @@ void PlayingState_update() {
     if(!paused)  Snake_update();
     if(!(Collision_checkWalls(Snake_getHead()) || Snake_checkCollisions())) {
         if(Collision_checkEntities(Snake_getHead(), metalBall)) {
+            Mix_PlayChannel(-1, eatSound,0);
             double positionVector[2] = {0,0};
             PlayingState_getRandomSpawn(positionVector);
             Entity_setPosition(metalBall,positionVector[0], positionVector[1]);
             Snake_add();
         } 
     } else if(!paused) {
+        Mix_PlayChannel(-1, deathSound,0);
         PlayingState_pause();
         PlayingState_restart();
     }

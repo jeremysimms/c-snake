@@ -8,10 +8,10 @@
 #include "window.h"
 #include "consts.h"
 #include "playing_state.h"
+#include "main_menu.h"
 #include "controller.h"
 #include "game_state_engine.h"
-
-//TODO: Move all event handling to separate module
+#include "audio.h"
 
 void gameLoop();
 void initStates();
@@ -20,6 +20,9 @@ void destroyStates();
 int main(int argc, char * args[]) {
     srand(time(NULL));
     if(!Window_init(GAME_WINDOW_TITLE,GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT)) {
+        return 1;
+    }
+    if(!Audio_init()) {
         return 1;
     }
     gameLoop();
@@ -40,10 +43,10 @@ void gameLoop() {
         GameStateEngine_handleEvents();
         GameStateEngine_update();
         GameStateEngine_render();
-        SDL_Delay(1);
+        SDL_Delay(5);
         frames++;
         int frameEnd = SDL_GetTicks();
-        debug_print("average fps : %f\n", frames/(frameEnd-start)/1000.0);
+        debug_print("average fps : %f\n", frames/((frameEnd-start)/1000.0));
     }
     GameStateEngine_destroy();
     Controller_destroy();
