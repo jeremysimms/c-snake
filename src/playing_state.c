@@ -35,7 +35,7 @@ void PlayingState_destroyTextures();
 Mix_Music * music = NULL;
 Mix_Chunk * eatSound = NULL;
 Mix_Chunk * deathSound = NULL;
-bool paused = false;
+bool paused = true;
 Snake * player = NULL;
 Entity * metalBall = NULL;
 SDL_Texture * metalBallTexture = NULL;
