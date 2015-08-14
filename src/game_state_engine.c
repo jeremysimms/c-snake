@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <SDL.h>
 #include "game_state_engine.h"
 #include "game_state.h"
-#include "SDL2/SDL.h"
 
 GameStateEngine stateEngine = NULL;
 

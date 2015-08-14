@@ -1,4 +1,4 @@
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

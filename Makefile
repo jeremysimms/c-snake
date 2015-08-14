@@ -5,12 +5,13 @@ BIN_DIR=bin
 OBJ_DIR=obj
 INC_DIR=include
 
+SDL_CONFIG=sdl2-config
 SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJS=$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 OUT=game
-CFLAGS=$(shell sdl2-config --cflags) -lm
+CFLAGS=$(shell $(SDL_CONFIG) --cflags) -lm
 INC=-I$(INC_DIR)/
-LIBS=$(shell sdl2-config --libs)
+LIBS=$(shell $(SDL_CONFIG) --libs)
 OTHER_LIB=-lSDL2_image -lSDL2_mixer
 ifeq ($(OS), Darwin)
 	DEBUG=-g
@@ -19,15 +20,21 @@ else
 endif
 debug: CFLAGS += $(DEBUG)
 debug: CFLAGS += -DDEBUG_TEST
+windows: CC=x86_64-w64-mingw32-gcc 
+windows: SDL_CONFIG=$(shell echo $$WINDOWS_SDL_CONFIG_LOCATION)
+windows: CFLAGS += --std=c99
 
 all: $(OBJS)
-	$(CC) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT)) $^
+	$(CC) $^ $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT))
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 debug: $(OBJS)
-	$(CC) $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT)_debug) $^
+	$(CC) $^ $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT)_debug)
+
+windows: $(OBJS)
+	$(CC) $^ $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT).exe)
 
 clean:
 	rm -f $(BIN_DIR)/*

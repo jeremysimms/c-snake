@@ -1,8 +1,8 @@
 #ifndef SPRITE_DEFINITION
 #define SPRITE_DEFINITION
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include <stdio.h>
 
 typedef struct sprite Sprite;

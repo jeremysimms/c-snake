@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "debug.h"
 #include "game_state.h"
 #include "window.h"
