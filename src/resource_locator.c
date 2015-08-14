@@ -38,6 +38,7 @@
       }
     }
     char * fullPath = malloc(strlen(path) + strlen(file) + 1);
+    fullPath[0] = '\0';
     strcat(fullPath,path);
     strcat(fullPath,file);
     fullPath[strlen(fullPath)] = '\0';
