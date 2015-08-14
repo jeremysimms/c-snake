@@ -1,5 +1,5 @@
 UNAME=$(shell uname)
-CC=c99
+CC=gcc
 SRC_DIR=src
 BIN_DIR=bin
 OBJ_DIR=obj
@@ -9,7 +9,7 @@ SDL_CONFIG=sdl2-config
 SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJS=$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 OUT=game
-CFLAGS=$(shell $(SDL_CONFIG) --cflags) -lm
+CFLAGS=$(shell $(SDL_CONFIG) --cflags) -lm -std=gnu99
 INC=-I$(INC_DIR)/
 LIBS=$(shell $(SDL_CONFIG) --libs)
 OTHER_LIB=-lSDL2_image -lSDL2_mixer

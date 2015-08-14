@@ -14,6 +14,7 @@
 #include "consts.h"
 #include "game_state.h"
 #include "debug.h"
+#include "resource_locator.h"
 
 void PlayingState_start();
 void PlayingState_tick(); 
@@ -79,9 +80,15 @@ void PlayingState_handleEvents(GameStateEngine engine, SDL_Event * e) {
 }
 
 void PlayingState_loadTextures() {
-    SDL_Surface * metalBallSurface = IMG_Load(METAL_BALL_LOCATION);
-    SDL_Surface * snakeHeadSurface = IMG_Load(PLAYER_HEAD_LOCATION);
-    SDL_Surface * snakeBodySurface = IMG_Load(PLAYER_BODY_LOCATION);
+    char * metalBallLocation = ResourceLocator_getFullPath(METAL_BALL_LOCATION);
+    char * snakeHeadLocation = ResourceLocator_getFullPath(PLAYER_HEAD_LOCATION);
+    char * snakeBodyLocation = ResourceLocator_getFullPath(PLAYER_BODY_LOCATION);
+    SDL_Surface * metalBallSurface = IMG_Load(metalBallLocation);
+    SDL_Surface * snakeHeadSurface = IMG_Load(snakeHeadLocation);
+    SDL_Surface * snakeBodySurface = IMG_Load(snakeBodyLocation);
+    free(metalBallLocation);
+    free(snakeHeadLocation);
+    free(snakeBodyLocation);
     if(metalBallSurface == NULL || snakeHeadSurface == NULL || snakeBodySurface == NULL) {
         debug_print("Error loading image. SDL Error: %s\n", IMG_GetError());
     }
@@ -97,18 +104,24 @@ void PlayingState_loadTextures() {
 }
 
 void PlayingState_loadSounds() {
-    eatSound  = Mix_LoadWAV("res/wav/eat.wav");
+    char * eatSoundLocation = ResourceLocator_getFullPath(EAT_SOUND_LOCATION);
+    char * deathSoundLocation = ResourceLocator_getFullPath(DEATH_SOUND_LOCATION);
+    char * musicLocation = ResourceLocator_getFullPath(MUSIC_LOCATION);
+    eatSound  = Mix_LoadWAV(eatSoundLocation);
     if(eatSound == NULL) {
         debug_print("Failed to load sound. Mix error: %s", Mix_GetError());
     }
-    deathSound = Mix_LoadWAV("res/wav/death.wav");
+    deathSound = Mix_LoadWAV(deathSoundLocation);
     if(deathSound == NULL) {
         debug_print("Failed to load sound. Mix error: %s", Mix_GetError());
     }
-    music = Mix_LoadMUS("res/wav/music.wav");
+    music = Mix_LoadMUS(musicLocation);
     if(music == NULL) {
         debug_print("Failed to load sound. Mix error: %s", Mix_GetError());
     }
+    free(eatSoundLocation);
+    free(deathSoundLocation);
+    free(musicLocation);
 }
 
 void PlayingState_keyHandlers() {
