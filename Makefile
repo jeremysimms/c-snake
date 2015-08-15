@@ -37,5 +37,5 @@ windows: $(OBJS)
 	$(CC) $^ $(CFLAGS) $(LIBS) $(OTHER_LIB) -o $(addprefix $(BIN_DIR)/,$(OUT).exe)
 
 clean:
-	rm -f $(BIN_DIR)/*
+	rm -rf $(BIN_DIR)/*
 	rm -f $(OBJ_DIR)/*.o
