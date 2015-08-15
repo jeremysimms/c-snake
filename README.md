@@ -3,6 +3,7 @@
 ##Introduction
 It's a fairly straightforward Snake clone I've been writing in my spare time in order to better understand how C works, and how to design a reasonably complex program in it. Some would say to learn the language first, and then jump into doing more complicated things like game development, but the learning experiment has been fruitful so far. I am sure there are numerous problems with this so it is an ongoing project, but the rewards of learning how to manage memory and deal with pointers have been tremendous. I attempted to make the codebase about as extensible as I could given my level of expertise and I think most of the base structs can be reused to a certain degree. I guess I'll know for sure on my next game. Overall I think C is my new favorite language, and although debugging can be a hastle at times (learning the unix tool chain has helped a lot with this though), I believe it has made me a better programmer.
 
+Thanks to Carleton Burke for the music.
 
 ##Dependencies
 
