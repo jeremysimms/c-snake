@@ -7,12 +7,12 @@ Thanks to Carleton Burke for the music.
 
 ##Dependencies
 
-In order to run this game you must install the SDL, and SDL_image libraries.
+In order to compile and run this game you must install the SDL, and SDL_image libraries.
 
 On Debian based systems:
 ```
 sudo apt-get update
-sudo apt-get install libsdl2-dev libsdl2-2.0-0 libsdl2-dbg libsdl2-image-2.0-0 libsdl2-image-dev libsdl2-image-dbg
+sudo apt-get install libsdl2-dev libsdl2-2.0-0 libsdl2-dbg libsdl2-image-2.0-0 libsdl2-image-dev libsdl2-image-dbg libsdl2-ttf-2.0-0 libsdl2-ttf-dev libsdl2-ttf-dbg
 ```
 
 ##Compiling
@@ -29,13 +29,18 @@ The compiled executable will be located in the `bin` directory and will be named
 
 ##Running
 
-To run the game, your current working directory must be the top level directory of the project, otherwise the game will not be able to locate its required resources correctly and the sprites will not render. Once I have a cross platform resource loading solution figured out this will no longer be necessary but until then, you must execute the game a level up from the `bin` directory.
+The game can be run from anywhere now that the resource locator is finished, but now the `res/` exist in the same directory as the executable otherwise the game will not be able to locate its required resources. If the game cannot find its resources, then the all that will appear is a blue screen. After folowing the compilation instructions above, run the following commands to run:
 
 ```
-cd c-snake
+mv bin/game .
 ./bin/game
 ```
 
+##Controls
+
+* Start/Pause: spacebar
+* Move: arrow keys
+
 ##Notes
 
-Although this game works fine on both OSX and Windows, I have not yet nailed down a solution for resource loading, so I will be holding off on creating prebuilt binaries for these operating systems. For now, if you follow the same compilation steps with minGW32 on windows or Clang on Mac OS, the game should work fine in much the same way. At some point I hope to at least have some sort of cross compiling solution for windows set up on a Jenkins box that will build automatically whenever commits are pushed to this repo. Stay tuned for more.
+As of now I have a cross compiler and build server set up to handle packaging prebuilt binaries for Windows. I will eventually add a linux install task to the make file for easier compilation and will come up with some methodology for compiling and packaging OSX binaries. OSX is proving to be more troublesome since a GCC cross compiler for it doesn't seem to exist. I might have to just set up a Jenkins slave to run on my laptop, not optimal. Stay tuned.
